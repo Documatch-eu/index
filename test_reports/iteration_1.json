@@ -1,0 +1,47 @@
+{
+  "summary": "Comprehensive frontend testing of Documatch.eu single-page landing app completed. 11/12 key flows PASS. One real bug found: form has noValidate which disables required attribute, allowing submission without GDPR checkbox checked (contradicts the spec which states 'required validation works - cannot submit without checking it').",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [
+      {
+        "component": "Lead form (data-testid=lead-form)",
+        "issue": "Form element has noValidate attribute (App.js line 640), which disables browser-native validation. Combined with handleSubmit not checking GDPR/required fields in JS, a user can submit the form with the GDPR checkbox unchecked AND with empty required fields. Spec explicitly requires: 'GDPR checkbox: required validation works (cannot submit without checking it - browser native validation)'. Tested with empty GDPR -> form still submitted to formspree successfully (success state reached).",
+        "selector": "[data-testid=lead-form]",
+        "priority": "HIGH"
+      },
+      {
+        "component": "GDPR checkbox styled overlay",
+        "issue": "The custom styled span (.dm-gdpr-box) and its inner SVG sit on top of the actual <input type=checkbox> with pointer-events enabled, intercepting clicks targeted directly at the input. For real users this is fine (the label wraps the input and clicking the label toggles the input), but it is worth noting that the custom styled box doesn't have a CSS rule like pointer-events:none on the decorative SVG/span. Not blocking; cosmetic/test-tooling concern only.",
+        "selector": "[data-testid=gdpr-check] .dm-gdpr-box",
+        "priority": "LOW"
+      }
+    ],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "test_report_links": [],
+  "action_items": [
+    "Remove noValidate from the <form> in App.js (line 640) OR add explicit JS validation in handleSubmit (check formRef.current.checkValidity() and gdpr checkbox.checked before fetch). Otherwise spec requirement on GDPR-required validation is not met."
+  ],
+  "critical_code_review_comments": [
+    "App.js (~1000 lines + large CSS template) is approaching the 700-line guideline. Consider extracting LEX, SECTORS, SECTOR_CONTENT, LEGAL into /src/content/*.js and the inline CSS to /src/App.css.",
+    "noValidate on form disables required attribute; either remove it or implement matching JS validation (currently the required attribute on inputs and on GDPR has no effect).",
+    "Hero section is also the 'form section' (formSectionRef = the entire hero). Scrolling lands at scrollY≈68 (just below sticky nav). Works correctly.",
+    "Decorative .dm-gdpr-box and inner SVG should ideally have pointer-events:none so the input itself is the click target; this is a minor a11y/testing improvement.",
+    "No external <a> redirects detected. Only emergent-badge anchor exists (system-level). Brand mark is not a link. Compliant with spec."
+  ],
+  "updated_files": [],
+  "success_rate": {
+    "backend": "N/A (no backend in this app per spec)",
+    "frontend": "92% (11/12 flows pass; GDPR/required validation fails)"
+  },
+  "test_credentials": "N/A",
+  "seed_data_creation": "None",
+  "retest_needed": true,
+  "main_agent_can_self_test": true,
+  "context_for_next_testing_agent": "All flows tested via Playwright at https://doc-platform-15.preview.emergentagent.com. PASS: nav render & brand, FR/ES/EN switching (updates nav CTA & hero), 9 sector tabs (BTP/Immo/Sante/Compta/Legal/Industrie/RH/Retail/Transport) updating hero title & sector preview in sync, form structure (action=https://formspree.io/f/mpqndldg, POST, 4 inputs + GDPR + submit), CTAs (nav-cta, ai-cta, sector-cta, mobile-sticky-cta) all scroll to hero/form section (scrollY ≈68 after smooth scroll), FAQ accordion (first open by default, single-open pattern, re-click closes), legal modals (cond/priv/legal open with correct title, close-X works, overlay-click closes), no external documatch.eu links, mobile viewport 390px shows sticky CTA functional. Form submission to real formspree endpoint returned success state (response.ok). Spinner appears during submission. FAIL: GDPR required attribute is bypassed because form has noValidate — submission proceeds even without GDPR check (success state reached).",
+  "rca of the issue": "Issue: GDPR/required validation does not work. Reproduction: 1) Open root URL. 2) Fill name/company/email/phone (or leave empty). 3) Do NOT check GDPR. 4) Click submit. Expected: browser prevents submission OR JS shows error. Actual: form submits to formspree and success state appears. Root cause: <form ... noValidate ...> at App.js:640 disables HTML5 native validation; handleSubmit() has no JS-side validation either. Mitigation: either remove the noValidate prop OR add `if (!formRef.current.checkValidity()) { formRef.current.reportValidity(); return; }` at start of handleSubmit."
+}
