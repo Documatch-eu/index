@@ -583,6 +583,32 @@ function App() {
         </div>
       </header>
 
+      {/* ============== SECTOR HEADER BAR ============== */}
+      <div className="dm-sector-header" data-testid="sector-header">
+        <div className="dm-container">
+          <div className="dm-sector-header-top">
+            <div>
+              <h2 className="dm-sector-header-title">{t.sectors_title}</h2>
+              <p className="dm-sector-header-sub">{t.sectors_sub}</p>
+            </div>
+          </div>
+          <div className="dm-sector-tabs" role="tablist" data-testid="sector-tabs">
+            {Object.keys(SECTORS).map((k) => (
+              <button
+                key={k}
+                role="tab"
+                aria-selected={sector === k}
+                data-testid={`sector-tab-${k}`}
+                className={`dm-sector-tab ${sector === k ? "active" : ""}`}
+                onClick={() => setSector(k)}
+              >
+                {SECTORS[k][lang]}
+              </button>
+            ))}
+          </div>
+        </div>
+      </div>
+
       {/* ============== HERO ============== */}
       <section className="dm-hero" ref={formSectionRef}>
         <div className="dm-hero-bg" aria-hidden="true">
@@ -773,41 +799,6 @@ function App() {
               <div className="dm-trust-num">100%</div>
               <div className="dm-trust-lbl">{lang === "fr" ? "indépendant" : lang === "es" ? "independiente" : "independent"}</div>
             </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ============== SECTOR TABS ============== */}
-      <section className="dm-section dm-sectors-section">
-        <div className="dm-container">
-          <div className="dm-section-head">
-            <h2 className="dm-h2">{t.sectors_title}</h2>
-            <p className="dm-section-sub">{t.sectors_sub}</p>
-          </div>
-          <div className="dm-sector-tabs" role="tablist" data-testid="sector-tabs">
-            {Object.keys(SECTORS).map((k) => (
-              <button
-                key={k}
-                role="tab"
-                aria-selected={sector === k}
-                data-testid={`sector-tab-${k}`}
-                className={`dm-sector-tab ${sector === k ? "active" : ""}`}
-                onClick={() => setSector(k)}
-              >
-                {SECTORS[k][lang]}
-              </button>
-            ))}
-          </div>
-          <div className="dm-sector-preview" data-testid="sector-preview">
-            <div className="dm-sector-preview-label">
-              {lang === "fr" ? "Cas d'usage" : lang === "es" ? "Caso de uso" : "Use case"} · <strong>{SECTORS[sector][lang]}</strong>
-            </div>
-            <h3 className="dm-sector-preview-title">{sec.title[lang]}</h3>
-            <p className="dm-sector-preview-sub">{sec.sub[lang]}</p>
-            <button className="dm-link-cta" onClick={scrollToForm} data-testid="sector-cta">
-              {t.nav_cta}
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
-            </button>
           </div>
         </div>
       </section>
@@ -1213,6 +1204,34 @@ const CSS = `
 .dm-section-head { text-align: center; max-width: 720px; margin: 0 auto 50px; }
 .dm-h2 { font-size: clamp(1.7rem, 3vw, 2.4rem); font-weight: 800; color: var(--dark); margin: 0 0 12px; letter-spacing: -0.025em; line-height: 1.15; }
 .dm-section-sub { font-size: 1.05rem; color: var(--muted); margin: 0; }
+
+/* ===== SECTOR HEADER (sticky bar below navbar) ===== */
+.dm-sector-header {
+  background: var(--dark);
+  color: #fff;
+  padding: 22px 0 18px;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+.dm-sector-header-top { margin-bottom: 14px; }
+.dm-sector-header-title {
+  font-family: 'Manrope', sans-serif; font-size: 1.05rem; font-weight: 700;
+  color: #fff; margin: 0 0 4px; letter-spacing: -0.01em;
+}
+.dm-sector-header-sub { font-size: 12.5px; color: #94a3b8; margin: 0; }
+
+.dm-sector-header .dm-sector-tabs {
+  display: flex; flex-wrap: nowrap; gap: 8px; overflow-x: auto; white-space: nowrap;
+  justify-content: flex-start; margin: 0; padding-bottom: 4px;
+  scrollbar-width: thin; scrollbar-color: #334155 transparent;
+}
+.dm-sector-header .dm-sector-tabs::-webkit-scrollbar { height: 4px; }
+.dm-sector-header .dm-sector-tabs::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
+.dm-sector-header .dm-sector-tab {
+  background: rgba(255,255,255,0.04); color: #cbd5e1; border-color: rgba(255,255,255,0.08);
+  padding: 8px 16px; font-size: 13px; flex-shrink: 0;
+}
+.dm-sector-header .dm-sector-tab:hover { color: #fff; border-color: rgba(255,255,255,0.18); background: rgba(255,255,255,0.07); }
+.dm-sector-header .dm-sector-tab.active { background: var(--blue); color: #fff; border-color: var(--blue); box-shadow: 0 4px 12px rgba(0,135,209,0.32); }
 
 /* ===== SECTOR TABS ===== */
 .dm-sector-tabs { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin-bottom: 40px; }
