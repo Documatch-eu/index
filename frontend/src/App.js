@@ -637,7 +637,6 @@ function App() {
                       action="https://formspree.io/f/mpqndldg"
                       method="POST"
                       onSubmit={handleSubmit}
-                      noValidate
                       data-testid="lead-form"
                     >
                       <input type="hidden" name="_subject" value="Nouveau lead Documatch.eu" />
@@ -1173,7 +1172,7 @@ const CSS = `
 .dm-gdpr-box {
   width: 18px; height: 18px; border-radius: 5px; border: 1.5px solid var(--border);
   background: #fff; display: grid; place-items: center; flex-shrink: 0; margin-top: 1px;
-  color: transparent; transition: all 0.18s ease;
+  color: transparent; transition: all 0.18s ease; pointer-events: none;
 }
 .dm-gdpr input:checked + .dm-gdpr-box { background: var(--blue); border-color: var(--blue); color: #fff; }
 .dm-gdpr-text { font-size: 12.5px; color: var(--muted); line-height: 1.45; }
