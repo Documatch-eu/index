@@ -1,9 +1,7 @@
 {
-  "buildCommand": "yarn install && yarn build",
-  "outputDirectory": "build",
+  "buildCommand": "cd frontend && npm install && npm run build",
+  "outputDirectory": "frontend/build",
   "installCommand": "echo skip",
   "framework": null,
-  "rewrites": [
-    { "source": "/(.*)", "destination": "/index.html" }
-  ]
+  "rewrites": [{ "source": "/(.*)", "destination": "/index.html" }]
 }
